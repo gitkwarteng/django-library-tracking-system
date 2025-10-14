@@ -1,0 +1,29 @@
+[
+  {
+    "model": "library.Author",
+    "pk": 1,
+    "fields": {
+      "first_name": "Author 1",
+      "last_name": "Author 1",
+      "biography": "First author"
+    }
+  },
+  {
+    "model": "library.Author",
+    "pk": 2,
+    "fields": {
+      "first_name": "Author 2",
+      "last_name": "Author 2",
+      "biography": "Second author"
+    }
+  },
+  {
+    "model": "library.Author",
+    "pk": 3,
+    "fields": {
+      "first_name": "Author 3",
+      "last_name": "Author 3",
+      "biography": "Third author"
+    }
+  }
+]

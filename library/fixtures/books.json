@@ -1,0 +1,35 @@
+[
+  {
+    "model": "library.Book",
+    "pk": 1,
+    "fields": {
+      "title": "Programing with Python",
+      "author_id": 1,
+      "isbn": "033-5678-456",
+      "genre": "dev",
+      "available_copies": 5
+    }
+  },
+  {
+    "model": "library.Book",
+    "pk": 2,
+    "fields": {
+      "title": "Django Cook Book",
+      "author_id": 2,
+      "isbn": "90675-784-4",
+      "genre": "dev",
+      "available_copies": 5
+    }
+  },
+  {
+    "model": "library.Book",
+    "pk": 3,
+    "fields": {
+      "title": "Ultimate Guide to Celery",
+      "author_id": 3,
+      "isbn": "0426-6936-4",
+      "genre": "dev",
+      "available_copies": 5
+    }
+  }
+]

@@ -1,5 +1,11 @@
+from datetime import timedelta
+
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.timezone import now
+
+from library.choices import BookGenreChoices
+
 
 class Author(models.Model):
     first_name = models.CharField(max_length=100)
@@ -10,18 +16,12 @@ class Author(models.Model):
         return f"{self.first_name} {self.last_name}"
 
 class Book(models.Model):
-    GENRE_CHOICES = [
-        ('fiction', 'Fiction'),
-        ('nonfiction', 'Non-Fiction'),
-        ('sci-fi', 'Sci-Fi'),
-        ('biography', 'Biography'),
-        # Add more genres as needed
-    ]
 
     title = models.CharField(max_length=200)
     author = models.ForeignKey(Author, related_name='books', on_delete=models.CASCADE)
     isbn = models.CharField(max_length=13, unique=True)
-    genre = models.CharField(max_length=50, choices=GENRE_CHOICES)
+    genre = models.CharField(
+        max_length=50, choices=BookGenreChoices.choices, default=BookGenreChoices.OTHER)
     available_copies = models.PositiveIntegerField(default=1)
 
     def __str__(self):
@@ -41,6 +41,12 @@ class Loan(models.Model):
     loan_date = models.DateField(auto_now_add=True)
     return_date = models.DateField(null=True, blank=True)
     is_returned = models.BooleanField(default=False)
+    due_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.book.title} loaned to {self.member.user.username}"
+
+    def save(self, *args, **kwargs):
+        if not self.due_date:
+            self.due_date = now() + timedelta(days=14)
+        super().save(*args, **kwargs)

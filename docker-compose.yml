@@ -19,6 +19,8 @@ services:
 
   web:
     build: .
+    image: library-web-image
+    container_name: library-web-app
     command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/code
@@ -32,7 +34,22 @@ services:
 
   celery:
     build: .
+    image: library-celery-image
+    container_name: library-celery-app
     command: celery -A library_system worker -l info
+    volumes:
+      - .:/code
+    env_file:
+      - .env
+    depends_on:
+      - web
+      - redis
+
+  celery-beat:
+    build: .
+    image: library-celery-beat-image
+    container_name: library-celery-beat-app
+    command: celery -A library_system beat -l info
     volumes:
       - .:/code
     env_file:

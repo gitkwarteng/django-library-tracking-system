@@ -1,8 +1,10 @@
+import rest_framework
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .models import Author, Book, Member, Loan
 from .serializers import AuthorSerializer, BookSerializer, MemberSerializer, LoanSerializer
 from rest_framework.decorators import action
+from rest_framework.pagination import PageNumberPagination
 from django.utils import timezone
 from .tasks import send_loan_notification
 
@@ -11,8 +13,9 @@ class AuthorViewSet(viewsets.ModelViewSet):
     serializer_class = AuthorSerializer
 
 class BookViewSet(viewsets.ModelViewSet):
-    queryset = Book.objects.all()
+    queryset = Book.objects.select_related('author').all()
     serializer_class = BookSerializer
+    pagination_class = PageNumberPagination
 
     @action(detail=True, methods=['post'])
     def loan(self, request, pk=None):
