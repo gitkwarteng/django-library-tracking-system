@@ -85,12 +85,10 @@ def check_overdue_loans():
         is_returned=False
     )
 
-    overdue_members = Member.objects.annotate(
-        has_overdure=Exists(over_due_subquery)
+    overdue_members = Member.objects.filter(
+        Exists(over_due_subquery)
     ).select_related(
         'user'
-    ).filter(
-        has_overdure=True,
     ).only('id', 'user').iterator(chunk_size=500)
 
     batch_size = 50
