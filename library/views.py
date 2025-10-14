@@ -17,6 +17,11 @@ class BookViewSet(viewsets.ModelViewSet):
     serializer_class = BookSerializer
     pagination_class = PageNumberPagination
 
+    def get_queryset(self):
+        queryset = Book.objects.select_related('author').all()
+        print(queryset.explain(verbose=True, analyze=True))
+        return queryset
+
     @action(detail=True, methods=['post'])
     def loan(self, request, pk=None):
         book = self.get_object()
