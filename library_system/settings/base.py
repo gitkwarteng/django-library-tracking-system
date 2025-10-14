@@ -118,7 +118,7 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_BEAT_SCHEDULE =  {
     'send-overdue-reminder': {
         'task': 'library_system.tasks.send_overdue_reminder',
-        'schedule': crontab(minutes=0,hours=0),
+        'schedule': crontab(minute=0,hour=0),
     }
 }
 
