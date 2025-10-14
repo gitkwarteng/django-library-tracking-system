@@ -48,5 +48,5 @@ class Loan(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.due_date:
-            self.due_date = now() + timedelta(days=14)
+            self.due_date = self.loan_date + timedelta(days=14)
         super().save(*args, **kwargs)
