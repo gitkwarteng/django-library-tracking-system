@@ -132,7 +132,6 @@ LOGGING = {
     'formatters': {
         'verbose': {
             'format': '%(levelname)s %(asctime)s %(module)s %(message)s',
-            'level': 'DEBUG',
             'propagate': True,
 
         }
@@ -147,9 +146,11 @@ LOGGING = {
     'loggers': {
         'django.db.backends': {
             'handlers': ['console'],
+            'level': 'DEBUG',
         },
         'root': {
             'handlers': ['console'],
+            'level': 'DEBUG',
         },
     }
 }
