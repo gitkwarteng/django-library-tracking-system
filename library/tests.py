@@ -258,7 +258,6 @@ class MemberAPITest(APITestCase):
         url = self.base_url + 'top-active/'
         response = self.client.get(url)
         json = response.json()
-        print(json)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Check 2 results returned
         self.assertEqual(len(json), 2)
