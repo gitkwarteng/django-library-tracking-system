@@ -43,7 +43,7 @@ def send_batch_overdue_notification(members: List[Dict[str, str]]):
         member_id:int = int(member['id'])
         email:str = member['email']
 
-        if not member_id or email:
+        if not (member_id and email):
             continue
 
         # Get books
