@@ -34,5 +34,8 @@ prune:
 shell:
 	docker exec -it library-web-app /bin/sh
 
+migrate:
+	docker exec library-web-app python manage.py makemigrations && python manage.py migrate
+
 celery:
 	celery -A libray_system worker -l INFO

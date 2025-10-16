@@ -1,8 +1,10 @@
-import rest_framework
+from django.db.models import Count, Q
 from rest_framework import viewsets, status
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from .models import Author, Book, Member, Loan
-from .serializers import AuthorSerializer, BookSerializer, MemberSerializer, LoanSerializer
+from .operations import extend_loan_due_date_by, get_top_active_members
+from .serializers import AuthorSerializer, BookSerializer, MemberSerializer, LoanSerializer, ActiveMemberSerializer
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from django.utils import timezone
@@ -19,7 +21,7 @@ class BookViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = Book.objects.select_related('author').all()
-        print(queryset.explain(verbose=True, analyze=True))
+        print(queryset.explain())
         return queryset
 
     @action(detail=True, methods=['post'])
@@ -54,9 +56,38 @@ class BookViewSet(viewsets.ModelViewSet):
         return Response({'status': 'Book returned successfully.'}, status=status.HTTP_200_OK)
 
 class MemberViewSet(viewsets.ModelViewSet):
-    queryset = Member.objects.all()
+    queryset = Member.objects.all().order_by('id')
     serializer_class = MemberSerializer
+
+    @action(detail=False, methods=['get'], url_path='top-active',
+            serializer_class=ActiveMemberSerializer)
+    def top_active(self, request, pk=None):
+
+        top_active_members = get_top_active_members(number=5)
+
+        serializer = self.get_serializer(top_active_members, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class LoanViewSet(viewsets.ModelViewSet):
     queryset = Loan.objects.all()
     serializer_class = LoanSerializer
+
+    @action(detail=True, methods=['post'])
+    def extend_due_date(self, request, pk=None):
+        try:
+            loan = self.get_object()
+            additional_days = int(request.data.get('additional_days'))
+
+            extend_loan_due_date_by(days=additional_days, loan=loan)
+
+            serializer = self.get_serializer(instance=loan)
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except ValidationError as e:
+            return Response({'error': e.detail}, status=status.HTTP_400_BAD_REQUEST)
+
+        except ValueError:
+            return Response({'error': 'Additional Days must be integer.'}, status=status.HTTP_400_BAD_REQUEST)

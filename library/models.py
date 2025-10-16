@@ -15,6 +15,11 @@ class Author(models.Model):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
+    class Meta:
+        verbose_name = "Author"
+        verbose_name_plural = "Authors"
+        ordering = ['first_name']
+
 class Book(models.Model):
 
     title = models.CharField(max_length=200)
@@ -27,6 +32,11 @@ class Book(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name = "Book"
+        verbose_name_plural = "Books"
+        ordering = ['title']
+
 class Member(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     membership_date = models.DateField(auto_now_add=True)
@@ -34,6 +44,11 @@ class Member(models.Model):
 
     def __str__(self):
         return self.user.username
+
+    class Meta:
+        verbose_name = "Member"
+        verbose_name_plural = "Members"
+        ordering = ['-membership_date']
 
 class Loan(models.Model):
     book = models.ForeignKey(Book, related_name='loans', on_delete=models.CASCADE)
@@ -46,7 +61,16 @@ class Loan(models.Model):
     def __str__(self):
         return f"{self.book.title} loaned to {self.member.user.username}"
 
+    class Meta:
+        verbose_name = "Loan"
+        verbose_name_plural = "Loans"
+        ordering = ['-loan_date']
+
     def save(self, *args, **kwargs):
         if not self.due_date:
-            self.due_date = self.loan_date + timedelta(days=14)
+            self.due_date = (self.loan_date or now()) + timedelta(days=14)
         super().save(*args, **kwargs)
+
+    @property
+    def is_overdue(self):
+        return self.due_date < now().date() if self.due_date else self.loan_date + timedelta(days=14) < now()

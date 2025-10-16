@@ -3,13 +3,13 @@
 class TestFactory:
 
     @staticmethod
-    def user_factory():
+    def user_factory(first_name=None, last_name=None, email=None, password=None, username=None):
         return {
-            "first_name": "test",
-            "last_name": "test",
-            "username": "test",
-            "email": "test@example.com",
-            "password": "test1212"
+            "first_name": first_name or "test",
+            "last_name": last_name or "test",
+            "username": username or "test",
+            "email": email or "test@example.com",
+            "password": password or "test1212"
         }
 
 
