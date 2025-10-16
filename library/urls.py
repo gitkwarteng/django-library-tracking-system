@@ -12,5 +12,5 @@ router.register(r'loans', views.LoanViewSet)
 app_name = 'api'
 
 urlpatterns = [
-    path('api/', include(router.urls)),
+    path('', include(router.urls)),
 ]
